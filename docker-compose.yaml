@@ -1,0 +1,91 @@
+version: '3.4'
+
+services:
+
+  redis-cluster:
+    image: redis:latest
+    env_file: .env
+    command: redis-cli -p 7001 --cluster create ${IP_NODE01}:7001 ${IP_NODE02}:7002 ${IP_NODE03}:7003 ${IP_NODE04}:7004 ${IP_NODE05}:7005 ${IP_NODE06}:7006 --cluster-replicas 1 --cluster-yes
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-4
+      - redis-5
+      - redis-6
+    networks:
+      redisnet:
+        ipv4_address: ${IP_CLIENT}
+
+  redis-1:
+    image: redis-cluster-node
+    env_file: .env
+    environment:
+      X_REDIS_PORT: 7001
+    networks:
+      redisnet:
+        ipv4_address: ${IP_NODE01}
+    ports:
+      - 7001:7001
+
+  redis-2:
+    image: redis-cluster-node
+    env_file: .env
+    environment:
+      X_REDIS_PORT: 7002
+    networks:
+      redisnet:
+        ipv4_address: ${IP_NODE02}
+    ports:
+      - 7002:7002
+
+  redis-3:
+    image: redis-cluster-node
+    env_file: .env
+    environment:
+      X_REDIS_PORT: 7003
+    networks:
+      redisnet:
+        ipv4_address: ${IP_NODE03}
+    ports:
+      - 7003:7003
+
+  redis-4:
+    image: redis-cluster-node
+    env_file: .env
+    environment:
+      X_REDIS_PORT: 7004
+    networks:
+      redisnet:
+        ipv4_address: ${IP_NODE04}
+    ports:
+      - 7004:7004
+
+  redis-5:
+    image: redis-cluster-node
+    env_file: .env
+    environment:
+      X_REDIS_PORT: 7005
+    networks:
+      redisnet:
+        ipv4_address: ${IP_NODE05}
+    ports:
+      - 7005:7005
+
+  redis-6:
+    image: redis-cluster-node
+    env_file: .env
+    environment:
+      X_REDIS_PORT: 7006
+    networks:
+      redisnet:
+        ipv4_address: ${IP_NODE06}
+    ports:
+      - 7006:7006
+
+networks:
+  redisnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${SUBNET}
